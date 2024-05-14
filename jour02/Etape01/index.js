@@ -1,23 +1,11 @@
-const server = require('./server');
-const routes = require('./routes');
+// une variable qui defini le chemin d'acces pour l'importer le données du server.js
+const server = require("./server");
 
+// une variable qui defini le numero du Port
 const PORT = process.env.PORT || 3000;
 
-server.on('request', (req, res) => {
-  if (req.method === 'GET' && req.url === '/tasks') {
-    routes.getAllTasks(req, res);
-  } else if (req.method === 'POST' && req.url === '/tasks') {
-    routes.createTask(req, res);
-  } else if (req.method === 'PUT' && req.url.match(/^\/tasks\/\d+$/)) {
-    routes.updateTask(req, res);
-  } else if (req.method === 'DELETE' && req.url.match(/^\/tasks\/\d+$/)) {
-    routes.deleteTask(req, res);
-  } else {
-    res.writeHead(404, { 'Content-Type': 'text/plain' });
-    res.end('Not Found');
-  }
-});
+// Une fonction callback qui écoute si le serveur a été mis en route, si oui, un communiqué s'affiche
 
-server.listen(PORT, () => {
+server.listen( PORT, () =>{
   console.log(`Server is running on port ${PORT}`);
 });

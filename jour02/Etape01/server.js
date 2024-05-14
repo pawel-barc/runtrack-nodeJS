@@ -1,9 +1,10 @@
+//une variable qui import modul http qui sert à création de serveur
 const http = require('http');
 
+const routes = require('./routes');
+
 const server = http.createServer((req, res) => {
-  res.setHeader('Content-Type', 'text/html');
-  res.writeHead(200);
-  res.end('<h1>Hello World!</h1>');
+  routes.handleRequest(req, res);
 });
 
 module.exports = server;
