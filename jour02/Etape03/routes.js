@@ -48,6 +48,41 @@ function createTask(req, res) {
   });
 }
 
+function updateTask(req, res) {
+  const taskId = parseInt(req.url.split('/')[2]); 
+  let body = '';
+  req.on('data', chunk => {
+    body += chunk.toString(); 
+  });
+  req.on('end', () => {
+    const updatedTask = JSON.parse(body); 
+    fs.readFile(dataPath, 'utf8', (err, data) => {
+      if (err) {
+        res.writeHead(500);
+        res.end('Server Error');
+        return;
+      }
+      let tasks = JSON.parse(data).tasks;
+      const index = tasks.findIndex(task => task.id === taskId);
+      if (index === -1) {
+        res.writeHead(404);
+        res.end('Task not found');
+        return;
+      }
+      tasks[index] = updatedTask; 
+      fs.writeFile(dataPath, JSON.stringify({ tasks }), err => {
+        if (err) {
+          res.writeHead(500);
+          res.end('Server Error');
+          return;
+        }
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(updatedTask));
+      });
+    });
+  });
+}
+
 
 // Eksport du gestion des routes
 module.exports = {
@@ -57,7 +92,10 @@ module.exports = {
       getAllTasks(req, res);
     } else if (method === 'POST' && url === '/tasks') {
       createTask(req, res);
-    } else {
+    } else if (method === 'PUT' && url === '/tasks') {
+      updateTask(req, res);
+    }
+    else {
       res.writeHead(404);
       res.end('Not Found');
     }
