@@ -18,14 +18,45 @@ function getAllTasks(req, res) {  // cette fonction télécharge le contenu du f
   });
 }
 
+// Traitement de la demande POST /tasks
+function createTask(req, res) {
+  let body = '';
+  req.on('data', chunk => {
+    body += chunk.toString();
+  });
+  req.on('end', () => {
+    const newTask = JSON.parse(body);
+    fs.readFile(dataPath, 'utf8', (err, data) => {
+      if (err) {
+        res.writeHead(500);
+        res.end('Server Error');
+        return;
+      }
+      const tasks = JSON.parse(data).tasks;
+      newTask.id = tasks.length + 1;
+      tasks.push(newTask);
+      fs.writeFile(dataPath, JSON.stringify({ tasks }), err => {
+        if (err) {
+          res.writeHead(500);
+          res.end('Server Error');
+          return;
+        }
+        res.writeHead(201, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(newTask));
+      });
+    });
+  });
+}
 
-// Eksort du gestion des routes
+// Eksport du gestion des routes
 module.exports = {
   handleRequest(req, res) {
     const { method, url } = req;
     if (method === 'GET' && url === '/tasks') {
       getAllTasks(req, res);
-    }else {
+    } else if (method === 'POST' && url === '/tasks') {
+      createTask(req, res);
+    } else {
       res.writeHead(404);
       res.end('Not Found');
     }
