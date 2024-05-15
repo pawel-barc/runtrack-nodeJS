@@ -1,0 +1,5 @@
+job01
+L'installation terminée avec succes
+job02
+affichage de base de donnés reussi
+job03
