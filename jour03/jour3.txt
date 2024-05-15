@@ -52,3 +52,11 @@ db.product.find({ price: {$gt:5}, quantity:{$lt:100}})
 job12
 !Terminé
 db.product.find({$or: [{ price: { $gt: 14.99 } },{ quantity:{ $gt: 100 } }]})
+
+job13
+!Terminé
+db.product.find({}, {_id: 0}).pretty()
+
+job14
+!Terminé
+db.category.findOne({ _id: ObjectId('6644b40b6506aae744896699')})
