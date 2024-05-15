@@ -32,5 +32,23 @@ job06
 !Terminé
 category
 product
-
+show collections
 job07
+!Terminé
+db.product.find().pretty()
+job08
+!Terminé
+db.category.find().limit(2).pretty()
+job09
+!Terminé
+db.product.find().sort({price: -1})
+job10
+!Terminé
+db.product.find().sort({price: -1})
+job11
+Terminé
+db.product.find({ price: {$gt:5}, quantity:{$lt:100}})
+
+job12
+!Terminé
+db.product.find({$or: [{ price: { $gt: 14.99 } },{ quantity:{ $gt: 100 } }]})
