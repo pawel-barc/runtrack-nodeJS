@@ -1,5 +1,21 @@
 job01
-L'installation terminée avec succes
+!!L'installation terminée avec succes
+
 job02
-affichage de base de donnés reussi
+!Affichage de base de donnés reussi
+
 job03
+!!Terminé
+db.product.insertOne({name: "chaussure", description: "une paire de chaussures", price: 35, quantity: 120})
+
+{
+  acknowledged: true,
+  insertedId: ObjectId('66447ba96506aae744896695')
+}
+
+job04
+!Terminé
+db.product.insertMany([
+{name: 'Pantalon noir', description : 'un pantalon noire', price : 13.98, quantity : 12},
+{name: 'Chaussettes', description: 'chaussettes cool',price: 6, quantity: 6}
+]);
