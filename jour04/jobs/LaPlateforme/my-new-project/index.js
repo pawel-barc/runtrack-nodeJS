@@ -1,21 +1,33 @@
 const { MongoClient } = require('mongodb');
+const readline = require('readline');
 
-// Adres URL serwera MongoDB
+// Adresse URL du serveur MongoDB
 const uri = "mongodb://localhost:27017"; 
 
-// Tworzenie nowego klienta MongoDB
+// Création d'un nouveau client MongoDB
 const client = new MongoClient(uri);
+
+// Création d'une interface pour la saisie utilisateur
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
+// Fonction pour obtenir le nom de famille de l'étudiant de l'utilisateur
+function askQuestion(query) {
+    return new Promise(resolve => rl.question(query, resolve));
+}
 
 async function run() {
     try {
-        // Połączenie z serwerem MongoDB
+        // Connexion au serveur MongoDB
         await client.connect();
-        console.log("Connected to MongoDB!");
+        console.log("Connecté à MongoDB!");
 
-        // Dostęp do bazy danych 'LaPlateforme'
+        // Accès à la base de données 'LaPlateforme'
         const database = client.db('LaPlateforme');
 
-        // Definicja schematu 'year' i dodanie danych
+        // Définition du schéma 'year' et ajout des données
         const yearCollection = database.collection('year');
         const years = [
             { year: "Bachelor 1" },
@@ -23,23 +35,26 @@ async function run() {
             { year: "Bachelor 3" }
         ];
         const yearInsertResult = await yearCollection.insertMany(years);
-        console.log("Years added successfully!");
+        console.log("Années ajoutées avec succès!");
 
-        // Pobranie ID dodanych lat studiów
+        // Obtention des ID des années d'études ajoutées
         const yearIds = yearInsertResult.insertedIds;
 
-        // Definicja schematu 'student' i dodanie danych z powiązaniem z 'year'
+        // Définition du schéma 'student' et ajout des données avec liaison 'year'
         const studentCollection = database.collection('student');
         const students = [
-            { firstname: "Bob", lastname: "LeBricoleur", students_number: "2", year_id: yearIds[0] },
-            { firstname: "John", lastname: "Doe", students_number: "3", year_id: yearIds[1] },
-            { firstname: "Marine", lastname: "Dupont", students_number: "4", year_id: yearIds[2] }
+            { firstname: "Bob", lastname: "LeBricoleur", students_number: 2, year_id: yearIds[0] },
+            { firstname: "John", lastname: "Doe", students_number: 3, year_id: yearIds[1] },
+            { firstname: "Marine", lastname: "Dupont", students_number: 4, year_id: yearIds[2] }
         ];
         await studentCollection.insertMany(students);
-        console.log("Students added successfully!");
+        console.log("Étudiants ajoutés avec succès!");
 
-        // Agregacja studentów z ich rokiem studiów
-        const studentWithYear = await studentCollection.aggregate([
+        // Obtention du nom de famille de l'étudiant de l'utilisateur
+        const lastnameInput = await askQuestion("Entrez le nom de famille de l'étudiant: ");
+
+        // Exécution de la requête pour obtenir les informations de l'étudiant
+        const studentInfo = await studentCollection.aggregate([
             {
                 $lookup: {
                     from: 'year',
@@ -50,19 +65,27 @@ async function run() {
             },
             {
                 $unwind: '$cursus'
+            },
+            {
+                $match: { lastname: lastnameInput }
             }
         ]).toArray();
 
-        console.log("Students with their cursus:", studentWithYear);
+        if (studentInfo.length > 0) {
+            console.log("Étudiant trouvé:", studentInfo);
+        } else {
+            console.log("Aucun étudiant trouvé avec ce nom de famille.");
+        }
 
     } catch (err) {
         console.error(err);
     } finally {
-        // Zamknięcie połączenia
+        // Fermeture de la connexion et de l'interface readline
         await client.close();
-        console.log("Connection to MongoDB closed");
+        rl.close();
+        console.log("Connexion à MongoDB fermée");
     }
 }
 
-// Uruchomienie funkcji
+// Exécution de la fonction principale
 run().catch(console.error);
