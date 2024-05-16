@@ -60,3 +60,13 @@ db.product.find({}, {_id: 0}).pretty()
 job14
 !Terminé
 db.category.findOne({ _id: ObjectId('6644b40b6506aae744896699')})
+
+job15
+!Terminé
+db.category.updateOne(
+   { name: "Books" }, 
+   { $set: { name: "Films" } }
+)
+
+job16
+!Terminé
