@@ -89,3 +89,33 @@ async function run() {
 
 // Exécution de la fonction principale
 run().catch(console.error);
+async function updateStudentCursus(studentId, newCursus) {
+    try {
+        // Connexion à MongoDB
+        await client.connect();
+
+        // Accès à la base de données 'LaPlateforme'
+        const database = client.db('LaPlateforme');
+        const studentCollection = database.collection('student');
+
+        // Mise à jour du cursus de l'étudiant en fonction de son ID
+        const result = await studentCollection.updateOne(
+            { _id: studentId },
+            { $set: { cursus: newCursus } }
+        );
+
+        if (result.modifiedCount > 0) {
+            console.log("Cursus de l'étudiant mis à jour avec succès.");
+        } else {
+            console.log("Aucun étudiant trouvé avec cet ID.");
+        }
+    } catch (err) {
+        console.error("Erreur lors de la mise à jour du cursus de l'étudiant:", err);
+    } finally {
+        // Fermeture de la connexion à MongoDB
+        await client.close();
+    }
+}
+
+// Exemple d'utilisation : mettre à jour le cursus de l'étudiant avec l'ID '123' en 'Bachelor 2'
+updateStudentCursus('6645e976c752593bf08b5d51', 'Bachelor 2')
