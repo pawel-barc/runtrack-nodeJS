@@ -2,17 +2,16 @@ const express = require('express');
 const path = require('path');
 
 const app = express();
-const port = 80; // Możesz użyć innego portu, np. 3000, jeśli port 80 jest zajęty
+const port = 80; 
 
-// Ustawienie folderu 'public' jako statycznego, aby serwować pliki statyczne
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Route dla strony głównej
+
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'index.html'));
 });
 
-// Route dla strony 'about'
+
 app.get('/about', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'about.html'));  
 });
@@ -26,7 +25,7 @@ app.use((req, res, next) =>{
 
 });
 
-// Uruchomienie serwera
+
 app.listen(port, () => {
-  console.log(`Serwer działa na http://localhost:${port}`);
+  console.log(`Serveur marche sur http://localhost:${port}`);
 });
