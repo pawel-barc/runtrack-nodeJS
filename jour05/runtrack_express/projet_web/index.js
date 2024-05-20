@@ -1,19 +1,32 @@
-const express = require('express'); // Importation du module Express
-const app = express(); // Création d'une instance d'Express
+const express = require('express');
+const path = require('path');
 
-const port = 80; // Définir le port sur lequel le serveur écoutera
+const app = express();
+const port = 80; // Możesz użyć innego portu, np. 3000, jeśli port 80 jest zajęty
 
-// Route pour la page d'accueil ('/')
+// Ustawienie folderu 'public' jako statycznego, aby serwować pliki statyczne
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Route dla strony głównej
 app.get('/', (req, res) => {
-  res.send('Bienvenue sur notre site web!'); // Opis strony głównej
+  res.sendFile(path.join(__dirname, 'views', 'index.html'));
 });
 
-// Route pour la page "À propos" ('/about')
+// Route dla strony 'about'
 app.get('/about', (req, res) => {
-  res.send('À propos de notre projet'); // Opis strony "À propos"
+  res.sendFile(path.join(__dirname, 'views', 'about.html'));  
 });
 
-// Démarrer le serveur et écouter sur le port défini
+app.get('/refuges', (req, res) =>{
+  res.sendFile(path.join(__dirname, 'views', 'refuges.html' ));
+});
+
+app.use((req, res, next) =>{
+  res.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
+
+});
+
+// Uruchomienie serwera
 app.listen(port, () => {
-  console.log(`Serveur en cours d'exécution sur http://localhost:${port}`);
+  console.log(`Serwer działa na http://localhost:${port}`);
 });
